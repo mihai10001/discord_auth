@@ -1,7 +1,21 @@
-import logo from './logo.svg';
+import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 
+
 function App() {
+  const DiscordOauth2 = require("discord-oauth2");
+
+  const clientId = process.env.REACT_APP_CLIENT_ID;
+  const clientSecret = process.env.REACT_APP_CLIENT_SECRET;
+  const clientRedirect = process.env.REACT_APP_CLIENT_REDIRECT;
+  const oauth = useMemo(() => 
+    new DiscordOauth2({
+      clientId: clientId,
+      clientSecret: clientSecret,
+      redirectUri: clientRedirect,
+    }), [clientId, clientSecret, clientRedirect, DiscordOauth2]
+  );
+
   return (
     <div className="App">
       <header className="App-header">
