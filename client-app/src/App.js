@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Button, Card, CardContent, CardActions, Typography } from '@mui/material';
+import SendIcon from '@mui/icons-material/Save';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -9,6 +12,8 @@ function App() {
   const [urlCode, setUrlCode] = useState('');
   const [token, setToken] = useState({ accessToken: '', refreshToken: '' });
   const [user, setUser] = useState({ userName: '', userId: '', userEmail: '' });
+
+  const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
 
   const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -61,22 +66,51 @@ function App() {
     navigate('');
   }
 
+  function openAuthUrl() {
+    const oauthUrl = oauth.generateAuthUrl({scope: "identify email guilds", state: crypto.randomBytes(16).toString("hex")});
+    window.location.replace(oauthUrl);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="background">
+      <Card sx={{ width: { sx: 1.0, sm: 250, md: 350, lg: 550 }, m: 3}}>
+        { isAuthenticated() ? (
+          <>
+            <CardContent>
+              <Typography sx={{ fontSize: 14, color: 'lightgray' }} gutterBottom>
+                Welcome back!
+              </Typography>
+              <Typography variant="h5" gutterBottom>
+                { user.userName }
+              </Typography>
+              <Typography sx={{ fontSize: 14, color: 'lightgray' }}>
+                { user.userId }
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant="outlined" color="success" startIcon={<SendIcon/>}>
+                Register
+              </Button>
+              <Button variant="outlined" color="warning" startIcon={<LogoutIcon/>} onClick={() => logout()}>
+                Logout
+              </Button>
+            </CardActions>
+          </>
+        ): (
+          <>
+          <CardContent>
+            <Typography variant="h5" gutterBottom>
+              Not authenticated!
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button variant="outlined" onClick={() => openAuthUrl()}>
+              Authenticate
+            </Button>
+          </CardActions>
+        </>
+        )}
+      </Card>
     </div>
   );
 }
