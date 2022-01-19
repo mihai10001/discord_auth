@@ -4,6 +4,7 @@ import './App.css';
 
 
 function App() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [urlCode, setUrlCode] = useState('');
   const [token, setToken] = useState({ accessToken: '', refreshToken: '' });
@@ -46,7 +47,20 @@ function App() {
       .then(res => setUser({userName: res.username, userId: res.id, userEmail: res.email}))
       .catch(error => console.log(error));
   }, [oauth, token, setUser]);
-  
+
+  function isAuthenticated() {
+    return urlCode && token.accessToken && token.refreshToken && user.userName && user.userId;
+  }
+
+  function logout() {
+    const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+    oauth.revokeToken(token.accessToken, credentials);
+    setToken({accessToken: '', refreshToken: ''});
+    setUser({userName: '', userId: ''});
+    setUrlCode('');
+    navigate('');
+  }
+
   return (
     <div className="App">
       <header className="App-header">
