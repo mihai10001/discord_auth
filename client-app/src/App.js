@@ -38,7 +38,7 @@ function App() {
         clientId: clientId,
         clientSecret: clientSecret,
         code: urlCode,
-        scope: "identify email guilds",
+        scope: "identify",
         grantType: "authorization_code",
         redirectUri: clientRedirect,
       })
@@ -67,7 +67,7 @@ function App() {
   }
 
   function openAuthUrl() {
-    const oauthUrl = oauth.generateAuthUrl({scope: "identify email guilds", state: crypto.randomBytes(16).toString("hex")});
+    const oauthUrl = oauth.generateAuthUrl({scope: "identify", state: crypto.randomBytes(16).toString("hex")});
     window.location.replace(oauthUrl);
   }
 
