@@ -11,7 +11,7 @@ function App() {
   const [searchParams] = useSearchParams();
   const [urlCode, setUrlCode] = useState('');
   const [token, setToken] = useState({ accessToken: '', refreshToken: '' });
-  const [user, setUser] = useState({ userName: '', userId: '', userEmail: '' });
+  const [user, setUser] = useState({ userName: '', userId: '', userDiscriminator: '', wallet: '' });
 
   const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
@@ -49,19 +49,19 @@ function App() {
   useEffect(() => {
     if (token.accessToken)
       oauth.getUser(token.accessToken)
-      .then(res => setUser({userName: res.username, userId: res.id, userEmail: res.email}))
+      .then(res => setUser({userName: res.username, userId: res.id, userDiscriminator: res.discriminator}))
       .catch(error => console.log(error));
   }, [oauth, token, setUser]);
 
   function isAuthenticated() {
-    return urlCode && token.accessToken && token.refreshToken && user.userName && user.userId;
+    return urlCode && token.accessToken && token.refreshToken && user.userName && user.userId && user.userDiscriminator;
   }
 
   function logout() {
     const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
     oauth.revokeToken(token.accessToken, credentials);
     setToken({accessToken: '', refreshToken: ''});
-    setUser({userName: '', userId: ''});
+    setUser({userName: '', userId: '', userDiscriminator: '', wallet: ''});
     setUrlCode('');
     navigate('');
   }
