@@ -1,15 +1,9 @@
 .background {
-  background-color: #282c34;
+  background-color: #202225;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.background > div {
-  background-color: rgb(39, 39, 39);
-  color: rgb(255, 255, 255);
 }
