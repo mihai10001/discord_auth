@@ -1,4 +1,5 @@
-const { dbCollectionName } = require('./config');
+const { dbCollectionName, discordBotToken, discordGuildId } = require('./config');
+const { Client, Intents } = require('discord.js');
 const sanitize = require('mongo-sanitize');
 
 
