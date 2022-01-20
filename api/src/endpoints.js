@@ -10,11 +10,14 @@ module.exports = (app, dbClient) => {
     const userDiscriminator = sanitize(req.body.userDiscriminator);
     const wallet = sanitize(req.body.wallet);
 
-    if (userName) {
-      await dbClient.collection(dbCollectionName).insertOne({userName});
-      res.status(200).send({status: 'INSERTED'});
-    } else {
-      res.status(400).send({status: 'MISSING_FIELDS'});
+    try {
+      await validateData(userId, userName, userDiscriminator, wallet, dbClient);
+    } catch (error) {
+      res.status(400).send({ status: 'INVALID_DATA: ' + error });
     }
   });
 };
+
+async function validateData(userId, userName, userDiscriminator, wallet, dbClient) {
+  if (!userId || !userName || !userDiscriminator || !wallet) throw 'MISSING FIELDS';
+}
