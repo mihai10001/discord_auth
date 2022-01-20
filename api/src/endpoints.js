@@ -20,4 +20,17 @@ module.exports = (app, dbClient) => {
 
 async function validateData(userId, userName, userDiscriminator, wallet, dbClient) {
   if (!userId || !userName || !userDiscriminator || !wallet) throw 'MISSING FIELDS';
+
+  const client = new Client({ intents: [Intents.FLAGS.GUILD_MEMBERS] });
+  await client.login(discordBotToken);
+  const list = client.guilds.cache.get(discordGuildId);
+  const members = await list.members.fetch();
+  const member = members.find(member => member.user.id === userId);
+
+  if (member) {
+    const user = member.user;
+    if (user.id === userId && user.username === userName && user.discriminator === userDiscriminator) {
+      await dbClient.collection(dbCollectionName).insertOne({ userId, userName, userDiscriminator, wallet, createdOn: new Date() });
+    } else throw 'INCONSISTENT DATA';
+  } else throw 'MEMBER IS NOT IN SERVER';
 }
