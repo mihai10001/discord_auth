@@ -106,27 +106,29 @@ function App() {
                 label="Wallet" variant="filled" fullWidth required/>
             </CardContent>
             <CardActions>
-              <Button variant="outlined" color="success" startIcon={<SendIcon/>}>
+              <Button variant="outlined" color="success" 
+                startIcon={<SendIcon/>} onClick={() => register()} disabled={!isAuthenticated() || !user.wallet} >
                 Register
               </Button>
-              <Button variant="outlined" color="warning" startIcon={<LogoutIcon/>} onClick={() => logout()}>
+              <Button variant="outlined" color="warning"
+                startIcon={<LogoutIcon/>} onClick={() => logout()}>
                 Logout
               </Button>
             </CardActions>
           </>
         ): (
           <>
-          <CardContent>
-            <Typography variant="h5" gutterBottom>
-              Not authenticated!
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button variant="outlined" onClick={() => openAuthUrl()}>
-              Authenticate
-            </Button>
-          </CardActions>
-        </>
+            <CardContent>
+              <Typography variant="h5" gutterBottom>
+                Not authenticated!
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant="outlined" onClick={() => openAuthUrl()}>
+                Authenticate
+              </Button>
+            </CardActions>
+          </>
         )}
       </Card>
     </div>
