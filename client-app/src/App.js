@@ -16,6 +16,7 @@ function App() {
   const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
 
+  const apiUrl = process.env.REACT_APP_API;
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const clientSecret = process.env.REACT_APP_CLIENT_SECRET;
   const clientRedirect = process.env.REACT_APP_CLIENT_REDIRECT;
@@ -69,6 +70,19 @@ function App() {
   function openAuthUrl() {
     const oauthUrl = oauth.generateAuthUrl({scope: "identify", state: crypto.randomBytes(16).toString("hex")});
     window.location.replace(oauthUrl);
+  }
+
+  function register() {
+    const { userName, userId, userDiscriminator, wallet } = user;
+    const data = { userName, userId, userDiscriminator, wallet };
+  
+    fetch(apiUrl + 'register', {
+      method: 'POST',
+      headers: {'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .catch(error => { console.log(error); logout(); });
   }
 
   return (
