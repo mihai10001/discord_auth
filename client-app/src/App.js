@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Card, CardContent, CardActions, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardActions, Typography, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Save';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -85,6 +85,8 @@ function App() {
     .catch(error => { console.log(error); logout(); });
   }
 
+  const formChangeHandler = (e) => setUser({...user, wallet: e.target.value});
+
   return (
     <div className="background">
       <Card sx={{ width: { sx: 1.0, sm: 250, md: 350, lg: 550 }, m: 3}}>
@@ -97,9 +99,11 @@ function App() {
               <Typography variant="h5" gutterBottom>
                 { user.userName }
               </Typography>
-              <Typography sx={{ fontSize: 14, color: 'lightgray' }}>
-                { user.userId }
+              <Typography sx={{ fontSize: 14, color: 'lightgray' }} gutterBottom>
+                To register, please input your wallet
               </Typography>
+              <TextField value={user.wallet || ''} onChange={formChangeHandler} error={!user.wallet} 
+                label="Wallet" variant="filled" fullWidth required/>
             </CardContent>
             <CardActions>
               <Button variant="outlined" color="success" startIcon={<SendIcon/>}>
