@@ -1,7 +1,7 @@
 const { dbCollectionName, clientId, clientSecret, clientRedirect, discordBotToken, discordGuildId } = require('./config');
 const { Client, Intents } = require('discord.js');
 const sanitize = require('mongo-sanitize');
-
+const fetch = require('node-fetch');
 
 module.exports = (app, dbClient) => {
   app.post('/register', async (req, res) => {
