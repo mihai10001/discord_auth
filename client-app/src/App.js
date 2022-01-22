@@ -10,8 +10,7 @@ function App() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [urlCode, setUrlCode] = useState('');
-  const [token, setToken] = useState({ accessToken: '', refreshToken: '' });
-  const [user, setUser] = useState({ userName: '', userId: '', userDiscriminator: '', wallet: '' });
+  const [user, setUser] = useState({ userName: '', wallet: '' });
 
   const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
@@ -30,39 +29,15 @@ function App() {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    if (code && !urlCode) setUrlCode(code);
+    setUrlCode(code);
   }, [searchParams, urlCode]);
 
-  useEffect(() => {
-    if (urlCode)
-      oauth.tokenRequest({
-        clientId: clientId,
-        clientSecret: clientSecret,
-        code: urlCode,
-        scope: "identify",
-        grantType: "authorization_code",
-        redirectUri: clientRedirect,
-      })
-      .then(res => setToken({accessToken: res.access_token, refreshToken: res.refresh_token}))
-      .catch(error => console.log(error));
-  }, [oauth, clientId, clientSecret, clientRedirect, urlCode]);
-
-  useEffect(() => {
-    if (token.accessToken)
-      oauth.getUser(token.accessToken)
-      .then(res => setUser({userName: res.username, userId: res.id, userDiscriminator: res.discriminator}))
-      .catch(error => console.log(error));
-  }, [oauth, token, setUser]);
-
   function isAuthenticated() {
-    return urlCode && token.accessToken && token.refreshToken && user.userName && user.userId && user.userDiscriminator;
+    return !!urlCode;
   }
 
   function logout() {
-    const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-    oauth.revokeToken(token.accessToken, credentials);
-    setToken({accessToken: '', refreshToken: ''});
-    setUser({userName: '', userId: '', userDiscriminator: '', wallet: ''});
+    setUser({userName: '', wallet: ''});
     setUrlCode('');
     navigate('');
   }
