@@ -5,13 +5,20 @@ const fetch = require('node-fetch');
 
 module.exports = (app, dbClient) => {
   app.post('/register', async (req, res) => {
-    const userId = sanitize(req.body.userId);
-    const userName = sanitize(req.body.userName);
-    const userDiscriminator = sanitize(req.body.userDiscriminator);
+    const code = sanitize(req.body.code);
     const wallet = sanitize(req.body.wallet);
 
     try {
-      await validateData(userId, userName, userDiscriminator, wallet, dbClient);
+      const oauthData = await authenticateUser(code);
+      if (oauthData.error === 'invalid_request') throw 'INVALID REQUEST';
+
+      const userData = await getUserInformation(oauthData);
+      if (userData.message === '401: Unauthorized') throw 'UNAUTHORIZED';
+
+      const isServerMember = await isUserInServer(userData);
+      if (isServerMember) await insertUserEntry(userData, wallet, dbClient);
+
+      res.sendStatus(200);
     } catch (error) {
       res.status(400).send({ status: 'INVALID_DATA: ' + error });
     }
