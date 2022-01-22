@@ -72,3 +72,17 @@ async function isUserInServer(userData) {
     } else throw 'INCONSISTENT DATA';
   } else throw 'MEMBER IS NOT IN SERVER';
 }
+
+async function insertUserEntry(userData, wallet, dbClient) {
+  if (!wallet) throw 'MISSING FIELDS';
+
+  await dbClient
+    .collection(dbCollectionName)
+    .insertOne({
+      userId: userData.id,
+      userName: userData.username,
+      userDiscriminator: userData.discriminator,
+      wallet,
+      createdOn: new Date()
+    });
+}
