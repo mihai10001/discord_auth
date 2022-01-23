@@ -18,7 +18,7 @@ module.exports = (app, dbClient) => {
       const isServerMember = await isUserInServer(userData);
       if (isServerMember) await insertUserEntry(userData, wallet, dbClient);
 
-      res.sendStatus(200);
+      res.status(200).send({ userName: userData.username });
     } catch (error) {
       res.status(400).send({ status: 'INVALID_DATA: ' + error });
     }
