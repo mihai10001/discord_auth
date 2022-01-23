@@ -48,16 +48,15 @@ function App() {
   }
 
   function register() {
-    const { userName, userId, userDiscriminator, wallet } = user;
-    const data = { userName, userId, userDiscriminator, wallet };
-  
+    const data = { code: urlCode, wallet: user.wallet };
+
     fetch(apiUrl + 'register', {
       method: 'POST',
       headers: {'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     })
-    .then(res => res.json())
-    .catch(error => { console.log(error); logout(); });
+    .then(res => {if (!res.ok) throw new Error('Response error');})
+    .catch(() => logout());
   }
 
   const formChangeHandler = (e) => setUser({...user, wallet: e.target.value});
@@ -68,14 +67,11 @@ function App() {
         { isAuthenticated() ? (
           <>
             <CardContent>
-              <Typography sx={{ fontSize: 14, color: 'lightgray' }} gutterBottom>
+              <Typography sx={{ fontSize: 24, color: 'lightgray' }} gutterBottom>
                 Welcome back!
               </Typography>
-              <Typography variant="h5" gutterBottom>
-                { user.userName }
-              </Typography>
               <Typography sx={{ fontSize: 14, color: 'lightgray' }} gutterBottom>
-                To register, please input your wallet
+                To register for the Koda NFT whitelist, please input your wallet
               </Typography>
               <TextField value={user.wallet || ''} onChange={formChangeHandler} error={!user.wallet} 
                 label="Wallet" variant="filled" fullWidth required/>
