@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Card, CardContent, CardActions, Typography, TextField } from '@mui/material';
+import { Button, Card, CardContent, CardActions, Typography, TextField, CircularProgress } from '@mui/material';
+import { blue } from '@mui/material/colors';
 import SendIcon from '@mui/icons-material/Save';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -11,6 +12,7 @@ function App() {
   const [searchParams] = useSearchParams();
   const [urlCode, setUrlCode] = useState('');
   const [user, setUser] = useState({ userName: '', wallet: '' });
+  const [loading, setLoading] = useState(false);
 
   const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
@@ -39,6 +41,7 @@ function App() {
   function logout() {
     setUser({userName: '', wallet: ''});
     setUrlCode('');
+    setLoading(false);
     navigate('');
   }
 
@@ -49,13 +52,18 @@ function App() {
 
   function register() {
     const data = { code: urlCode, wallet: user.wallet };
+    setLoading(true);
 
     fetch(apiUrl + 'register', {
       method: 'POST',
       headers: {'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     })
-    .then(res => {if (!res.ok) throw new Error('Response error');})
+    .then(res => {
+       if (!res.ok) throw new Error('Response error');
+       res.json().then(data => setUser({...user, userName: data.userName}));
+       setLoading(false);
+    })
     .catch(() => logout());
   }
 
@@ -78,8 +86,13 @@ function App() {
             </CardContent>
             <CardActions>
               <Button variant="outlined" color="success" 
-                startIcon={<SendIcon/>} onClick={() => register()} disabled={!isAuthenticated() || !user.wallet} >
+                startIcon={<SendIcon/>} onClick={() => register()} disabled={!isAuthenticated() || !user.wallet || loading} >
                 Register
+                { loading && (
+                  <CircularProgress size={24}
+                    sx={{ color: blue[500], position: 'absolute', top: '50%', left: '50%', marginTop: '-12px', marginLeft: '-12px' }}
+                  />
+                )}
               </Button>
               <Button variant="outlined" color="warning"
                 startIcon={<LogoutIcon/>} onClick={() => logout()}>
