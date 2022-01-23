@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Card, CardContent, CardActions, Typography, TextField, CircularProgress } from '@mui/material';
+import { Button, Card, CardContent, CardActions, Typography, TextField, CircularProgress, Alert } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import SendIcon from '@mui/icons-material/Save';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -13,6 +13,7 @@ function App() {
   const [urlCode, setUrlCode] = useState('');
   const [user, setUser] = useState({ userName: '', wallet: '' });
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
@@ -42,6 +43,7 @@ function App() {
     setUser({userName: '', wallet: ''});
     setUrlCode('');
     setLoading(false);
+    setSuccess(false);
     navigate('');
   }
 
@@ -63,6 +65,7 @@ function App() {
        if (!res.ok) throw new Error('Response error');
        res.json().then(data => setUser({...user, userName: data.userName}));
        setLoading(false);
+       setSuccess(true);
     })
     .catch(() => logout());
   }
@@ -86,7 +89,7 @@ function App() {
             </CardContent>
             <CardActions>
               <Button variant="outlined" color="success" 
-                startIcon={<SendIcon/>} onClick={() => register()} disabled={!isAuthenticated() || !user.wallet || loading} >
+                startIcon={<SendIcon/>} onClick={() => register()} disabled={!isAuthenticated() || !user.wallet || loading || success} >
                 Register
                 { loading && (
                   <CircularProgress size={24}
@@ -115,6 +118,11 @@ function App() {
           </>
         )}
       </Card>
+      { success && (
+        <Alert variant="filled" severity="success">
+          <b>{ user.userName }</b>, you have successfully registered. You can now close this page
+        </Alert>
+      )}
     </div>
   );
 }
