@@ -63,11 +63,13 @@ async function isUserInServer(userData) {
   await client.login(discordBotToken);
   const list = client.guilds.cache.get(discordGuildId);
   const members = await list.members.fetch();
+  const roles = await list.roles.fetch();
   const member = members.find(member => member.user.id === userData.id);
 
   if (member) {
     const user = member.user;
     if (user.id === userData.id && user.username === userData.username && user.discriminator === userData.discriminator) {
+      userData.roles = member._roles.map(roleId => { if (roles.has(roleId)) return roles.get(roleId).name });
       return true;
     } else throw 'INCONSISTENT DATA';
   } else throw 'MEMBER IS NOT IN SERVER';
@@ -82,6 +84,7 @@ async function insertUserEntry(userData, wallet, dbClient) {
       userId: userData.id,
       userName: userData.username,
       userDiscriminator: userData.discriminator,
+      userRoles: userData.roles,
       wallet,
       createdOn: new Date()
     });
