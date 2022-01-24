@@ -14,6 +14,7 @@ function App() {
   const [user, setUser] = useState({ userName: '', wallet: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
 
   const crypto = require("crypto");
   const DiscordOauth2 = require("discord-oauth2");
@@ -42,8 +43,6 @@ function App() {
   function logout() {
     setUser({userName: '', wallet: ''});
     setUrlCode('');
-    setLoading(false);
-    setSuccess(false);
     navigate('');
   }
 
@@ -67,7 +66,11 @@ function App() {
        setLoading(false);
        setSuccess(true);
     })
-    .catch(() => logout());
+    .catch(() => {
+      logout();
+      setLoading(false);
+      setFailure(true);
+    });
   }
 
   const formChangeHandler = (e) => setUser({...user, wallet: e.target.value});
@@ -121,6 +124,11 @@ function App() {
       { success && (
         <Alert variant="filled" severity="success">
           <b>{ user.userName }</b>, you have successfully registered. You can now close this page
+        </Alert>
+      )}
+      { failure && (
+        <Alert variant="filled" severity="error">
+          Registration failed. Please try again
         </Alert>
       )}
     </div>
