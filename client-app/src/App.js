@@ -41,6 +41,7 @@ function App() {
   }
 
   function logout() {
+    setSuccess(false);
     setUser({userName: '', wallet: ''});
     setUrlCode('');
     navigate('');
