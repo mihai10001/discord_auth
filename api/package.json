@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "API for the Koda NFT Whitelist Registration",
   "main": "src/entry.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
+    "start": "node src/entry.js",
     "dev": "nodemon src/entry.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

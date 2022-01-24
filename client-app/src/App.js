@@ -106,8 +106,8 @@ function App() {
         ): (
           <>
             <CardContent>
-              <Typography variant="h5" gutterBottom>
-                Not authenticated!
+              <Typography variant="h5">
+                Not authenticated.
               </Typography>
             </CardContent>
             <CardActions>
