@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Card, CardContent, CardActions, Typography, TextField, CircularProgress, Alert } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import SendIcon from '@mui/icons-material/Save';
@@ -16,21 +16,9 @@ function App() {
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
 
-  const crypto = require("crypto");
-  const DiscordOauth2 = require("discord-oauth2");
-
   const apiUrl = process.env.REACT_APP_API;
   const clientId = process.env.REACT_APP_CLIENT_ID;
-  const clientSecret = process.env.REACT_APP_CLIENT_SECRET;
   const clientRedirect = process.env.REACT_APP_CLIENT_REDIRECT;
-  const oauth = useMemo(() => 
-    new DiscordOauth2({
-      clientId: clientId,
-      clientSecret: clientSecret,
-      redirectUri: clientRedirect,
-    }), [clientId, clientSecret, clientRedirect, DiscordOauth2]
-  );
-
   useEffect(() => {
     const code = searchParams.get('code');
     setUrlCode(code);
@@ -48,8 +36,13 @@ function App() {
   }
 
   function openAuthUrl() {
-    const oauthUrl = oauth.generateAuthUrl({scope: "identify", state: crypto.randomBytes(16).toString("hex")});
-    window.location.replace(oauthUrl);
+    const discordAuthUrl = 'https://discord.com/api/oauth2/authorize?';
+    const authParams = new URLSearchParams();
+    authParams.append("client_id", clientId);
+    authParams.append("redirect_uri", clientRedirect);
+    authParams.append("response_type", "code");
+    authParams.append("scope", "identify");
+    window.location.replace(discordAuthUrl + authParams.toString());
   }
 
   function register() {
